@@ -4,8 +4,7 @@ import com.portofolio.expensetracker.dto.CreateExpenseRequest;
 import com.portofolio.expensetracker.entity.Expense;
 import com.portofolio.expensetracker.entity.User;
 import com.portofolio.expensetracker.repository.ExpenseRepository;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import com.portofolio.expensetracker.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,11 +15,11 @@ import java.util.List;
 public class ExpenseService {
 
     private final ExpenseRepository expenseRepository;
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
-
+    private final UserRepository userRepository;
     public Expense create(CreateExpenseRequest request) {
+
+        User user = userRepository.findById(1L)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
         Expense expense = new Expense();
 
@@ -28,6 +27,7 @@ public class ExpenseService {
         expense.setAmount(request.getAmount());
         expense.setDate(request.getDate());
         expense.setCategory(request.getCategory());
+        expense.setUser(user);
 
         return expenseRepository.save(expense);
     }

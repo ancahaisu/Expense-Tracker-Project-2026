@@ -1,5 +1,7 @@
 package com.portofolio.expensetracker.controller;
 
+import com.portofolio.expensetracker.dto.LoginRequest;
+import com.portofolio.expensetracker.dto.LoginResponse;
 import com.portofolio.expensetracker.dto.RegisterUserRequest;
 import com.portofolio.expensetracker.dto.UserResponse;
 import com.portofolio.expensetracker.entity.User;
@@ -23,5 +25,14 @@ public class AuthController {
                 savedUser.getUsername(),
                 savedUser.getEmail()
         );
+    }
+
+    @PostMapping("/login")
+    public LoginResponse login(
+            @RequestBody LoginRequest request) {
+
+        String token = userService.login(request);
+
+        return new LoginResponse(token);
     }
 }
