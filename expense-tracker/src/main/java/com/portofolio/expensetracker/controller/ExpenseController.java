@@ -5,6 +5,7 @@ import com.portofolio.expensetracker.entity.Expense;
 import com.portofolio.expensetracker.service.ExpenseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.Authentication;
 
 import java.util.List;
 
@@ -16,27 +17,40 @@ public class ExpenseController {
     private final ExpenseService expenseService;
 
     @PostMapping
-    public Expense create(@RequestBody CreateExpenseRequest request) {
-        return expenseService.create(request);
+    public Expense create(
+            @RequestBody CreateExpenseRequest request,
+            Authentication authentication) {
+
+        return expenseService.create(
+                request,
+                authentication);
     }
 
     @GetMapping
-    public List<Expense> getAll() {
-        return expenseService.getAll();
+    public List<Expense> getAll(Authentication authentication) {
+        return expenseService.getAll(authentication);
     }
     @GetMapping("/{id}")
     public Expense getById(@PathVariable Long id) {
         return expenseService.getById(id);
     }
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
-        expenseService.delete(id);
+    public void delete(
+            @PathVariable Long id,
+            Authentication authentication) {
+
+        expenseService.delete(id, authentication);
     }
+
     @PutMapping("/{id}")
     public Expense update(
             @PathVariable Long id,
-            @RequestBody CreateExpenseRequest request) {
+            @RequestBody CreateExpenseRequest request,
+            Authentication authentication) {
 
-        return expenseService.update(id, request);
+        return expenseService.update(
+                id,
+                request,
+                authentication);
     }
 }
