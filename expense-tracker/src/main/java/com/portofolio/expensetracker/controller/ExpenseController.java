@@ -1,6 +1,7 @@
 package com.portofolio.expensetracker.controller;
 
 import com.portofolio.expensetracker.dto.CreateExpenseRequest;
+import com.portofolio.expensetracker.dto.UpdateExpenseRequest;
 import com.portofolio.expensetracker.entity.Expense;
 import com.portofolio.expensetracker.service.ExpenseService;
 import lombok.RequiredArgsConstructor;
@@ -45,12 +46,12 @@ public class ExpenseController {
     @PutMapping("/{id}")
     public Expense update(
             @PathVariable Long id,
-            @RequestBody CreateExpenseRequest request,
+            @RequestBody UpdateExpenseRequest request,
             Authentication authentication) {
 
-        return expenseService.update(
+        return expenseService.updateExpense(
                 id,
                 request,
-                authentication);
+                authentication.getName());
     }
 }

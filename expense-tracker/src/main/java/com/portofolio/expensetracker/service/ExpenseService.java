@@ -1,6 +1,7 @@
 package com.portofolio.expensetracker.service;
 
 import com.portofolio.expensetracker.dto.CreateExpenseRequest;
+import com.portofolio.expensetracker.dto.UpdateExpenseRequest;
 import com.portofolio.expensetracker.entity.Expense;
 import com.portofolio.expensetracker.entity.User;
 import com.portofolio.expensetracker.repository.ExpenseRepository;
@@ -65,21 +66,16 @@ public class ExpenseService {
 
         expenseRepository.delete(expense);
     }
-
-    public Expense update(
-            Long id,
-            CreateExpenseRequest request,
-            Authentication authentication) {
-
-        Expense expense = expenseRepository.findById(id)
+    public Expense updateExpense(Long expenseId,
+                                 UpdateExpenseRequest request,
+                                 String userEmail){
+        Expense expense = expenseRepository.findById(expenseId)
                 .orElseThrow(() -> new RuntimeException("Expense not found"));
-
-        String email = authentication.getName();
-
-        if (!expense.getUser().getEmail().equals(email)) {
-            throw new RuntimeException("Access denied");
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        if (!expense.getUser().getId().equals(user.getId())) {
+            throw new RuntimeException("You are not allowed to update this expense");
         }
-
         expense.setTitle(request.getTitle());
         expense.setAmount(request.getAmount());
         expense.setDate(request.getDate());
