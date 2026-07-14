@@ -1,6 +1,7 @@
 package com.portofolio.expensetracker.controller;
 
 import com.portofolio.expensetracker.dto.CreateExpenseRequest;
+import com.portofolio.expensetracker.dto.ExpenseResponse;
 import com.portofolio.expensetracker.dto.UpdateExpenseRequest;
 import com.portofolio.expensetracker.entity.Expense;
 import com.portofolio.expensetracker.service.ExpenseService;
@@ -18,7 +19,7 @@ public class ExpenseController {
     private final ExpenseService expenseService;
 
     @PostMapping
-    public Expense create(
+    public ExpenseResponse create(
             @RequestBody CreateExpenseRequest request,
             Authentication authentication) {
 
@@ -28,11 +29,11 @@ public class ExpenseController {
     }
 
     @GetMapping
-    public List<Expense> getAll(Authentication authentication) {
+    public List<ExpenseResponse> getAll(Authentication authentication) {
         return expenseService.getAll(authentication);
     }
     @GetMapping("/{id}")
-    public Expense getById(@PathVariable Long id) {
+    public ExpenseResponse getById(@PathVariable Long id) {
         return expenseService.getById(id);
     }
     @DeleteMapping("/{id}")
@@ -44,12 +45,12 @@ public class ExpenseController {
     }
 
     @PutMapping("/{id}")
-    public Expense update(
+    public ExpenseResponse update(
             @PathVariable Long id,
             @RequestBody UpdateExpenseRequest request,
             Authentication authentication) {
 
-        return expenseService.updateExpense(
+        return expenseService.update(
                 id,
                 request,
                 authentication.getName());

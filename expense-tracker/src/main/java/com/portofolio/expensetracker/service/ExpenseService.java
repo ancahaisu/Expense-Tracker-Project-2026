@@ -1,6 +1,7 @@
 package com.portofolio.expensetracker.service;
 
 import com.portofolio.expensetracker.dto.CreateExpenseRequest;
+import com.portofolio.expensetracker.dto.ExpenseResponse;
 import com.portofolio.expensetracker.dto.UpdateExpenseRequest;
 import com.portofolio.expensetracker.entity.Expense;
 import com.portofolio.expensetracker.entity.User;
@@ -18,7 +19,7 @@ public class ExpenseService {
 
     private final ExpenseRepository expenseRepository;
     private final UserRepository userRepository;
-    public Expense create(
+    public ExpenseResponse create(
             CreateExpenseRequest request,
             Authentication authentication) {
 
@@ -35,22 +36,28 @@ public class ExpenseService {
         expense.setCategory(request.getCategory());
         expense.setUser(user);
 
-        return expenseRepository.save(expense);
+        Expense savedExpense = expenseRepository.save(expense);
+
+        return mapToResponse(savedExpense);
     }
 
-    public List<Expense> getAll(Authentication authentication) {
+    public List<ExpenseResponse> getAll(Authentication authentication) {
 
         String email = authentication.getName();
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        return expenseRepository.findByUser(user);
+        return expenseRepository.findByUser(user)
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
     }
 
-    public Expense getById(Long id) {
-        return expenseRepository.findById(id)
+    public ExpenseResponse getById(Long id) {
+        Expense expense = expenseRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Expense not found"));
+        return mapToResponse(expense);
     }
 
     public void delete(Long id, Authentication authentication) {
@@ -66,7 +73,7 @@ public class ExpenseService {
 
         expenseRepository.delete(expense);
     }
-    public Expense updateExpense(Long expenseId,
+    public ExpenseResponse update(Long expenseId,
                                  UpdateExpenseRequest request,
                                  String userEmail){
         Expense expense = expenseRepository.findById(expenseId)
@@ -81,6 +88,17 @@ public class ExpenseService {
         expense.setDate(request.getDate());
         expense.setCategory(request.getCategory());
 
-        return expenseRepository.save(expense);
+        Expense updatedExpense = expenseRepository.save(expense);
+
+        return mapToResponse(updatedExpense);
+    }
+    private ExpenseResponse mapToResponse(Expense expense) {
+        return ExpenseResponse.builder()
+                .id(expense.getId())
+                .title(expense.getTitle())
+                .amount(expense.getAmount())
+                .date(expense.getDate())
+                .category(expense.getCategory())
+                .build();
     }
 }
