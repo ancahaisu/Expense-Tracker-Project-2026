@@ -54,9 +54,12 @@ public class ExpenseService {
                 .toList();
     }
 
-    public ExpenseResponse getById(Long id) {
-        Expense expense = expenseRepository.findById(id)
+    public ExpenseResponse getById(Long id, Authentication authentication) {
+
+        Expense expense = expenseRepository
+                .findByIdAndUserEmail(id, authentication.getName())
                 .orElseThrow(() -> new RuntimeException("Expense not found"));
+
         return mapToResponse(expense);
     }
 

@@ -33,8 +33,11 @@ public class ExpenseController {
         return expenseService.getAll(authentication);
     }
     @GetMapping("/{id}")
-    public ExpenseResponse getById(@PathVariable Long id) {
-        return expenseService.getById(id);
+    public ExpenseResponse getById(
+            @PathVariable Long id,
+            Authentication authentication) {
+
+        return expenseService.getById(id, authentication);
     }
     @DeleteMapping("/{id}")
     public void delete(
